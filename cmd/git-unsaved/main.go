@@ -1,15 +1,14 @@
 package main
 
-// A simple program demonstrating the spinner component from the Bubbles
-// component library.
-
 import (
 	"fmt"
+	"log"
 	"os"
 
 	"github.com/charmbracelet/bubbles/spinner"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
+	"github.com/urfave/cli/v2"
 )
 
 type errMsg error
@@ -65,9 +64,20 @@ func (m model) View() string {
 }
 
 func main() {
-	p := tea.NewProgram(initialModel())
-	if _, err := p.Run(); err != nil {
-		fmt.Println(err)
-		os.Exit(1)
+	app := &cli.App{
+		Name:    "git-unsaved",
+		Usage:   "Finding all your dirty Git repositories",
+		Version: "v0.0.1",
+		Action: func(*cli.Context) error {
+			p := tea.NewProgram(initialModel())
+			if _, err := p.Run(); err != nil {
+				return err
+			}
+			return nil
+		},
+	}
+
+	if err := app.Run(os.Args); err != nil {
+		log.Fatal(err)
 	}
 }
