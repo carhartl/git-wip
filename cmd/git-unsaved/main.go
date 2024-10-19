@@ -64,9 +64,23 @@ func (m model) View() string {
 }
 
 func main() {
+	cli.AppHelpTemplate = `{{.Name}} - {{.Usage}}
+
+Usage:
+  git-unsaved [path] [flags]
+
+Examples:
+  git-unsaved
+  git-unsaved /path/to/directory
+  git unsaved
+
+Flags:
+  -h, --help
+  -v, --version`
+
 	app := &cli.App{
 		Name:    "git-unsaved",
-		Usage:   "Finding all your dirty Git repositories",
+		Usage:   "Find all your dirty Git repositories",
 		Version: "v0.0.1",
 		Action: func(*cli.Context) error {
 			p := tea.NewProgram(initialModel())
