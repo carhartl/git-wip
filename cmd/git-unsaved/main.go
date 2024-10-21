@@ -89,17 +89,17 @@ func (m model) View() string {
 
 func getRepos(sub chan repoMsg) tea.Cmd {
 	return func() tea.Msg {
-		err := filepath.Walk(".", func(path string, info fs.FileInfo, err error) error {
+		err := filepath.WalkDir(".", func(path string, d fs.DirEntry, err error) error {
 			if err != nil {
 				return err
 			}
-			if info.IsDir() {
-				// TODO: filter for git repos
+			if d.IsDir() && filepath.Base(path) == ".git" {
 				abspath, err := filepath.Abs(path)
 				if err != nil {
 					return err
 				}
-				sub <- repoMsg{repo: repo{path: abspath}}
+				sub <- repoMsg{repo: repo{path: filepath.Dir(abspath)}}
+				return fs.SkipDir
 			}
 			return nil
 		})
