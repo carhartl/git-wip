@@ -5,6 +5,7 @@ import (
 	"log"
 	"os"
 	"path/filepath"
+	"regexp"
 
 	"github.com/charmbracelet/bubbles/list"
 	"github.com/charmbracelet/bubbles/spinner"
@@ -14,6 +15,7 @@ import (
 )
 
 var docStyle = lipgloss.NewStyle().Margin(1, 2)
+var excludeDirs = regexp.MustCompile(`.+/(\..+|node_modules)`) // Skip hidden directories (incl. .git) and node_modules
 
 type repoMsg struct {
 	repo repo
@@ -93,12 +95,14 @@ func getRepos(sub chan repoMsg) tea.Cmd {
 			if err != nil {
 				return err
 			}
-			if d.IsDir() && filepath.Base(path) == ".git" {
-				abspath, err := filepath.Abs(path)
-				if err != nil {
-					return err
+			if d.IsDir() && excludeDirs.MatchString(path) {
+				if filepath.Base(path) == ".git" {
+					abspath, err := filepath.Abs(path)
+					if err != nil {
+						return err
+					}
+					sub <- repoMsg{repo: repo{path: filepath.Dir(abspath)}}
 				}
-				sub <- repoMsg{repo: repo{path: filepath.Dir(abspath)}}
 				return fs.SkipDir
 			}
 			return nil
