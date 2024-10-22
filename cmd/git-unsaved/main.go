@@ -187,7 +187,7 @@ Flags:
 		Version: "v0.0.1",
 		Action: func(*cli.Context) error {
 			l := list.New([]list.Item{}, list.NewDefaultDelegate(), 0, 0)
-			l.Title = "Repositories"
+			l.Title = "Dirty Repositories"
 			l.SetSpinner(spinner.MiniDot)
 			l.ToggleSpinner()
 			m := model{list: l, sub: make(chan repoMsg)}
