@@ -7,6 +7,7 @@ import (
 	"os"
 	"path/filepath"
 	"regexp"
+	"strings"
 
 	"github.com/charmbracelet/bubbles/list"
 	"github.com/charmbracelet/bubbles/spinner"
@@ -85,7 +86,9 @@ func (m model) View() string {
 	if m.err != nil {
 		return m.err.Error()
 	}
-	s := m.list.View()
+	// Remove duplicate (status has it) + misaligned string coming from:
+	// https://github.com/charmbracelet/bubbles/blob/178590b4469b2386726cff8da7c479615a746a94/list/list.go#L1220
+	s := strings.Replace(m.list.View(), "No repositories.", "", 1)
 	if m.quitting {
 		s += "\n"
 	}
