@@ -58,7 +58,6 @@ func (m model) Init() tea.Cmd {
 	)
 }
 
-// TODO: upon selection + enter, cd to directory!
 func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
 	case tea.WindowSizeMsg:
