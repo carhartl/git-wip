@@ -44,6 +44,7 @@ func (r repo) FilterValue() string {
 
 type model struct {
 	list     list.Model
+	path     string
 	sub      chan repoMsg
 	quitting bool
 	err      error
@@ -52,7 +53,7 @@ type model struct {
 func (m model) Init() tea.Cmd {
 	return tea.Batch(
 		m.list.StartSpinner(),
-		getRepos(m.sub),
+		getRepos(m.path, m.sub),
 		waitForRepoStatus(m.sub),
 	)
 }
@@ -92,19 +93,20 @@ func (m model) View() string {
 	return s
 }
 
-func getRepos(sub chan repoMsg) tea.Cmd {
+func getRepos(path string, sub chan repoMsg) tea.Cmd {
 	return func() tea.Msg {
-		err := filepath.WalkDir(".", func(path string, d fs.DirEntry, err error) error {
+		path, err := filepath.Abs(path)
+		if err != nil {
+			return err
+		}
+
+		err = filepath.WalkDir(path, func(path string, d fs.DirEntry, err error) error {
 			if err != nil {
 				return err
 			}
 			if d.IsDir() && excludeDirs.MatchString(path) {
 				if filepath.Base(path) == ".git" {
-					abspath, err := filepath.Abs(path)
-					if err != nil {
-						return err
-					}
-					repopath := filepath.Dir(abspath)
+					repopath := filepath.Dir(path)
 
 					r, err := git.PlainOpen(repopath)
 					if err != nil {
@@ -185,13 +187,12 @@ Flags:
 		Name:    "git-unsaved",
 		Usage:   "Find all your dirty Git repositories",
 		Version: "v0.0.1",
-		Action: func(*cli.Context) error {
+		Action: func(ctx *cli.Context) error {
 			l := list.New([]list.Item{}, list.NewDefaultDelegate(), 0, 0)
 			l.Title = "Dirty Repositories"
 			l.SetSpinner(spinner.MiniDot)
 			l.ToggleSpinner()
-			m := model{list: l, sub: make(chan repoMsg)}
-			// TODO: how to pass along path argument?
+			m := model{list: l, path: ctx.Args().First(), sub: make(chan repoMsg)}
 			p := tea.NewProgram(m, tea.WithAltScreen())
 			if _, err := p.Run(); err != nil {
 				return err
