@@ -190,6 +190,7 @@ Flags:
 			l := list.New([]list.Item{}, list.NewDefaultDelegate(), 0, 0)
 			l.Title = "Dirty Repositories"
 			l.SetSpinner(spinner.MiniDot)
+			l.SetStatusBarItemName("repository", "repositories")
 			l.ToggleSpinner()
 			m := model{list: l, path: ctx.Args().First(), sub: make(chan repoMsg)}
 			p := tea.NewProgram(m, tea.WithAltScreen())
