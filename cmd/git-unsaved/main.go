@@ -5,6 +5,7 @@ import (
 	"io/fs"
 	"log"
 	"os"
+	"os/exec"
 	"path/filepath"
 	"regexp"
 	"strings"
@@ -61,6 +62,11 @@ func (m model) Init() tea.Cmd {
 
 func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
+	case tea.KeyMsg:
+		switch msg.String() {
+		case "enter":
+			return m, openEditor(m.list.SelectedItem().(repo).path)
+		}
 	case tea.WindowSizeMsg:
 		h, v := docStyle.GetFrameSize()
 		m.list.SetSize(msg.Width-h, msg.Height-v)
@@ -147,6 +153,13 @@ func waitForRepoStatus(sub chan repoMsg) tea.Cmd {
 	return func() tea.Msg {
 		return repoMsg(<-sub)
 	}
+}
+
+func openEditor(path string) tea.Cmd {
+	c := exec.Command("code", path)
+	return tea.ExecProcess(c, func(err error) tea.Msg {
+		return nil
+	})
 }
 
 func addDefaultGitignoreToWorktree(w *git.Worktree) {
