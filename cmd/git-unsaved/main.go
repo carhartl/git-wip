@@ -5,6 +5,7 @@ import (
 	"io/fs"
 	"log"
 	"os"
+	"os/exec"
 	"path/filepath"
 	"regexp"
 
@@ -60,6 +61,16 @@ func (m model) Init() tea.Cmd {
 
 func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
+	case tea.KeyMsg:
+		switch msg.String() {
+		case "enter":
+			// `to do script "..." in window 1` won't open a new Terminal window but it won't cd,
+			// I assume because git-unsaved is still running...
+			c := exec.Command("osascript", "-e", "tell application \"Terminal\" to do script \"cd "+m.list.SelectedItem().(repo).path+"\"", ">/dev/null")
+			return m, tea.ExecProcess(c, func(err error) tea.Msg {
+				return nil
+			})
+		}
 	case tea.WindowSizeMsg:
 		h, v := docStyle.GetFrameSize()
 		m.list.SetSize(msg.Width-h, msg.Height-v)
