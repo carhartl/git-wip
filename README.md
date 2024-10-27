@@ -1,3 +1,3 @@
-# git-unsaved
+# git-wip
 
-[![CI](https://github.com/carhartl/git-unsaved/actions/workflows/ci.yml/badge.svg)](https://github.com/carhartl/git-unsaved/actions/workflows/ci.yml)
+[![CI](https://github.com/carhartl/git-wip/actions/workflows/ci.yml/badge.svg)](https://github.com/carhartl/git-wip/actions/workflows/ci.yml)

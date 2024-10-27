@@ -1,4 +1,4 @@
-module github.com/carhartl/git-unsaved
+module github.com/carhartl/git-wip
 
 go 1.23.2
 

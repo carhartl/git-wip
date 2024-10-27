@@ -187,19 +187,19 @@ func main() {
 	cli.AppHelpTemplate = `{{.Name}} - {{.Usage}}
 
 Usage:
-  git-unsaved [path] [flags]
+  git-wip [path] [flags]
 
 Examples:
-  git-unsaved
-  git-unsaved /path/to/directory
-  git unsaved
+  git-wip
+  git-wip /path/to/directory
+  git wip
 
 Flags:
   -h, --help
   -v, --version`
 
 	app := &cli.App{
-		Name:    "git-unsaved",
+		Name:    "git-wip",
 		Usage:   "Find all your dirty Git repositories",
 		Version: "v0.0.1",
 		Action: func(ctx *cli.Context) error {
