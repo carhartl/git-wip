@@ -29,7 +29,8 @@ type doneMsg struct{}
 type errMsg error
 
 type repo struct {
-	path string
+	path   string
+	status string
 }
 
 func (r repo) Title() string {
@@ -37,7 +38,7 @@ func (r repo) Title() string {
 }
 
 func (r repo) Description() string {
-	return "Foo" // TODO: Gather Git status here, separated by \n
+	return r.status
 }
 
 func (r repo) FilterValue() string {
@@ -129,13 +130,13 @@ func getRepos(path string, sub chan repoMsg) tea.Cmd {
 					// Required until https://github.com/go-git/go-git/issues/1210 is fixed
 					addDefaultGitignoreToWorktree(w)
 
-					status, err := w.Status()
+					status, err := w.Status() // => git status --porcelain
 					if err != nil {
 						return err
 					}
 
 					if !status.IsClean() {
-						sub <- repoMsg{repo: repo{path: repopath}}
+						sub <- repoMsg{repo: repo{path: repopath, status: status.String()}}
 					}
 				}
 				return fs.SkipDir
