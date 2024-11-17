@@ -26,7 +26,11 @@ Flags:
 		Name:  "git-wip",
 		Usage: "Find all your dirty Git repositories",
 		Action: func(ctx *cli.Context) error {
-			p := tea.NewProgram(initialModel(ctx.Args().First()), tea.WithAltScreen())
+			dir := ctx.Args().First()
+			if dir == "" {
+				dir, _ = os.Getwd() // Default: current directory
+			}
+			p := tea.NewProgram(initialModel(dir), tea.WithAltScreen())
 			if _, err := p.Run(); err != nil {
 				return err
 			}
