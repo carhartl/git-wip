@@ -20,13 +20,11 @@ Examples:
   git wip
 
 Flags:
-  -h, --help
-  -v, --version`
+  -h, --help`
 
 	app := &cli.App{
-		Name:    "git-wip",
-		Usage:   "Find all your dirty Git repositories",
-		Version: "v0.0.1",
+		Name:  "git-wip",
+		Usage: "Find all your dirty Git repositories",
 		Action: func(ctx *cli.Context) error {
 			p := tea.NewProgram(initialModel(ctx.Args().First()), tea.WithAltScreen())
 			if _, err := p.Run(); err != nil {
