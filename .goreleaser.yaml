@@ -1,0 +1,18 @@
+---
+version: 2
+project_name: git-wip
+builds:
+  - main: .
+    env: [CGO_ENABLED=0]
+    goos:
+      - linux
+      - windows
+      - darwin
+    goarch:
+      - amd64
+      - arm64
+brews:
+  - name: git-wip
+    repository:
+      owner: carhartl
+      name: homebrew-tap
