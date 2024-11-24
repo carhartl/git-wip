@@ -20,6 +20,7 @@ func (r repo) Title() string {
 }
 
 func (r repo) Description() string {
+	// NOTE: list renders single line only..
 	return r.status
 }
 
