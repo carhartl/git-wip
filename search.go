@@ -12,6 +12,14 @@ import (
 	"github.com/go-git/go-git/v5/plumbing/format/gitignore"
 )
 
+type repoMsg struct {
+	repo repo
+}
+type repo struct {
+	path   string
+	status string
+}
+
 var excludeDirs = regexp.MustCompile(`.+/(\..+|node_modules)`) // Skip hidden directories (incl. .git) and node_modules
 
 func getRepos(path string, sub chan repoMsg) tea.Cmd {

@@ -12,16 +12,8 @@ import (
 
 var docStyle = lipgloss.NewStyle().Margin(1, 2)
 
-type repoMsg struct {
-	repo repo
-}
 type doneMsg struct{}
 type errMsg error
-
-type repo struct {
-	path   string
-	status string
-}
 
 func (r repo) Title() string {
 	return r.path
