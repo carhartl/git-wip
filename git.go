@@ -32,6 +32,17 @@ func (gi GitInfo) Summary() string {
 	return ""
 }
 
+func (gi GitInfo) IsClean() bool {
+	return gi.modified == 0 &&
+		gi.added == 0 &&
+		gi.deleted == 0 &&
+		gi.renamed == 0 &&
+		gi.copied == 0 &&
+		gi.unmerged == 0 &&
+		gi.untracked == 0 &&
+		gi.stashed == 0
+}
+
 func (gi *GitInfo) parseLine(l string) {
 	s := bufio.NewScanner(strings.NewReader(l))
 	s.Split(bufio.ScanWords)

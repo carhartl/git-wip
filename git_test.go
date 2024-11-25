@@ -100,3 +100,13 @@ func TestParseWithStashed(t *testing.T) {
 
 	require.Equal(t, 1, gi.stashed)
 }
+
+func TestIsClean(t *testing.T) {
+	var gi GitInfo
+
+	gi = GitInfo{}
+	require.Equal(t, true, gi.IsClean())
+
+	gi = GitInfo{modified: 1}
+	require.Equal(t, false, gi.IsClean())
+}
