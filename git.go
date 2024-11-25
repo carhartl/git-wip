@@ -40,13 +40,6 @@ func (gi GitInfo) IsClean() bool {
 }
 
 func (gi GitInfo) Summary() string {
-	// TODO: produces human readable output
-	// => Turn infos into the following output:
-	//  You have 2 unpushed commits. => TODO: ahead
-	//  You have 2 files you have to commit. => modified + added + deleted + renamed + copied + untracked
-	//  You have 2 files you have to merge. => unmerged
-	//  Add a remote address to push the code to. => TODO: missing remote
-	//  You have 1 stashes. => stashed
 	s := []string{}
 
 	committable := gi.modified + gi.added + gi.deleted + gi.renamed + gi.copied + gi.untracked
