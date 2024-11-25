@@ -3,6 +3,8 @@ package main
 import (
 	"strings"
 	"testing"
+
+	"github.com/stretchr/testify/require"
 )
 
 func TestParseWithModified(t *testing.T) {
@@ -20,9 +22,7 @@ func TestParseWithModified(t *testing.T) {
 			gi := GitInfo{}
 			gi.Parse(s)
 
-			if gi.modified != 1 {
-				t.Errorf("Expected modified == 1, got: %v", gi.modified)
-			}
+			require.Equal(t, 1, gi.modified)
 		})
 	}
 }
@@ -33,9 +33,7 @@ func TestParseWithAdded(t *testing.T) {
 	gi := GitInfo{}
 	gi.Parse(s)
 
-	if gi.added != 1 {
-		t.Errorf("Expected added == 1, got: %v", gi.added)
-	}
+	require.Equal(t, 1, gi.added)
 }
 
 func TestParseWithDeleted(t *testing.T) {
@@ -53,9 +51,7 @@ func TestParseWithDeleted(t *testing.T) {
 			gi := GitInfo{}
 			gi.Parse(s)
 
-			if gi.deleted != 1 {
-				t.Errorf("Expected deleted == 1, got: %v", gi.deleted)
-			}
+			require.Equal(t, 1, gi.deleted)
 		})
 	}
 }
@@ -66,9 +62,7 @@ func TestParseWithRenamed(t *testing.T) {
 	gi := GitInfo{}
 	gi.Parse(s)
 
-	if gi.renamed != 1 {
-		t.Errorf("Expected renamed == 1, got: %v", gi.renamed)
-	}
+	require.Equal(t, 1, gi.renamed)
 }
 
 func TestParseWithCopied(t *testing.T) {
@@ -77,9 +71,7 @@ func TestParseWithCopied(t *testing.T) {
 	gi := GitInfo{}
 	gi.Parse(s)
 
-	if gi.copied != 1 {
-		t.Errorf("Expected copied == 1, got: %v", gi.copied)
-	}
+	require.Equal(t, 1, gi.copied)
 }
 
 func TestParseWithUnmerged(t *testing.T) {
@@ -88,9 +80,7 @@ func TestParseWithUnmerged(t *testing.T) {
 	gi := GitInfo{}
 	gi.Parse(s)
 
-	if gi.unmerged != 1 {
-		t.Errorf("Expected unmerged == 1, got: %v", gi.unmerged)
-	}
+	require.Equal(t, 1, gi.unmerged)
 }
 
 func TestParseWithUntracked(t *testing.T) {
@@ -99,9 +89,7 @@ func TestParseWithUntracked(t *testing.T) {
 	gi := GitInfo{}
 	gi.Parse(s)
 
-	if gi.untracked != 1 {
-		t.Errorf("Expected untracked == 1, got: %v", gi.untracked)
-	}
+	require.Equal(t, 1, gi.untracked)
 }
 
 func TestParseWithStashed(t *testing.T) {
@@ -110,7 +98,5 @@ func TestParseWithStashed(t *testing.T) {
 	gi := GitInfo{}
 	gi.Parse(s)
 
-	if gi.stashed != 1 {
-		t.Errorf("Expected stashed == 1, got: %v", gi.stashed)
-	}
+	require.Equal(t, 1, gi.stashed)
 }
