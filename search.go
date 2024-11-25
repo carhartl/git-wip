@@ -1,15 +1,13 @@
 package main
 
 import (
-	"bufio"
+	"bytes"
 	"io/fs"
-	"os"
+	"os/exec"
 	"path/filepath"
 	"regexp"
 
 	tea "github.com/charmbracelet/bubbletea"
-	git "github.com/go-git/go-git/v5"
-	"github.com/go-git/go-git/v5/plumbing/format/gitignore"
 )
 
 type repoMsg struct {
@@ -37,26 +35,20 @@ func getRepos(path string, sub chan repoMsg) tea.Cmd {
 				if filepath.Base(path) == ".git" {
 					repopath := filepath.Dir(path)
 
-					r, err := git.PlainOpen(repopath)
+					var buf = new(bytes.Buffer)
+					cmd := exec.Command("git", "status", "--porcelain=v2", "--show-stash")
+					cmd.Stdout = buf
+					cmd.Dir = repopath
+					err = cmd.Run()
 					if err != nil {
 						return err
 					}
 
-					w, err := r.Worktree()
-					if err != nil {
-						return err
-					}
+					gi := GitInfo{}
+					gi.Parse(buf)
 
-					// Required until https://github.com/go-git/go-git/issues/1210 is fixed
-					addDefaultGitignoreToWorktree(w)
-
-					status, err := w.Status() // => git status --porcelain
-					if err != nil {
-						return err
-					}
-
-					if !status.IsClean() {
-						sub <- repoMsg{repo: repo{path: repopath, status: status.String()}}
+					if !gi.IsClean() {
+						sub <- repoMsg{repo: repo{path: repopath, status: gi.Summary()}}
 					}
 				}
 				return fs.SkipDir
@@ -73,26 +65,5 @@ func getRepos(path string, sub chan repoMsg) tea.Cmd {
 func waitForRepoStatus(sub chan repoMsg) tea.Cmd {
 	return func() tea.Msg {
 		return repoMsg(<-sub)
-	}
-}
-
-func addDefaultGitignoreToWorktree(w *git.Worktree) {
-	home, err := os.UserHomeDir()
-	if err != nil {
-		panic(err)
-	}
-
-	//TODO: first try $XDG_CONFIG_HOME/git/ignore, then fall back to $HOME/.config/git/ignore
-	f, err := os.Open(filepath.Join(home, ".config", "git", "ignore"))
-	if err != nil {
-		panic(err)
-	}
-	defer f.Close()
-
-	sc := bufio.NewScanner(f)
-	sc.Split(bufio.ScanLines)
-	for sc.Scan() {
-		ignorePattern := sc.Text()
-		w.Excludes = append(w.Excludes, gitignore.ParsePattern(ignorePattern, nil))
 	}
 }
