@@ -6,14 +6,24 @@ import (
 )
 
 func TestParseWithModified(t *testing.T) {
-	// TODO: also test staged area, M.
-	s := strings.NewReader("1 .M N... 100644 100644 100644 e69de29bb2d1d6434b8b29ae775ad8c2e48c5391 e69de29bb2d1d6434b8b29ae775ad8c2e48c5391 test.txt\n")
+	var tests = []struct {
+		name  string
+		input string
+	}{
+		{"staged", "1 M. N... 100644 100644 100644 e69de29bb2d1d6434b8b29ae775ad8c2e48c5391 e69de29bb2d1d6434b8b29ae775ad8c2e48c5391 test.txt\n"},
+		{"unstaged", "1 .M N... 100644 100644 100644 e69de29bb2d1d6434b8b29ae775ad8c2e48c5391 e69de29bb2d1d6434b8b29ae775ad8c2e48c5391 test.txt\n"},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			s := strings.NewReader(tt.input)
 
-	gi := GitInfo{}
-	gi.Parse(s)
+			gi := GitInfo{}
+			gi.Parse(s)
 
-	if gi.modified != 1 {
-		t.Errorf("Expected modified == 1, got: %v", gi.modified)
+			if gi.modified != 1 {
+				t.Errorf("Expected modified == 1, got: %v", gi.modified)
+			}
+		})
 	}
 }
 
@@ -29,14 +39,24 @@ func TestParseWithAdded(t *testing.T) {
 }
 
 func TestParseWithDeleted(t *testing.T) {
-	// TODO: can also be "1 .D N... 100644 100644 000000 e69de29bb2d1d6434b8b29ae775ad8c2e48c5391 e69de29bb2d1d6434b8b29ae775ad8c2e48c5391 test.txt\n"
-	s := strings.NewReader("1 D. N... 100644 000000 000000 e69de29bb2d1d6434b8b29ae775ad8c2e48c5391 0000000000000000000000000000000000000000 test.txt\n")
+	var tests = []struct {
+		name  string
+		input string
+	}{
+		{"staged", "1 D. N... 100644 000000 000000 e69de29bb2d1d6434b8b29ae775ad8c2e48c5391 0000000000000000000000000000000000000000 test.txt\n"},
+		{"unstaged", "1 .D N... 100644 000000 000000 e69de29bb2d1d6434b8b29ae775ad8c2e48c5391 0000000000000000000000000000000000000000 test.txt\n"},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			s := strings.NewReader(tt.input)
 
-	gi := GitInfo{}
-	gi.Parse(s)
+			gi := GitInfo{}
+			gi.Parse(s)
 
-	if gi.deleted != 1 {
-		t.Errorf("Expected deleted == 1, got: %v", gi.deleted)
+			if gi.deleted != 1 {
+				t.Errorf("Expected deleted == 1, got: %v", gi.deleted)
+			}
+		})
 	}
 }
 
