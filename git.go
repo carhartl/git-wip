@@ -2,6 +2,7 @@ package main
 
 import (
 	"bufio"
+	"fmt"
 	"io"
 	"strconv"
 	"strings"
@@ -27,11 +28,6 @@ func (gi *GitInfo) Parse(r io.Reader) {
 	}
 }
 
-func (gi GitInfo) Summary() string {
-	// TODO: produces human readable output
-	return ""
-}
-
 func (gi GitInfo) IsClean() bool {
 	return gi.modified == 0 &&
 		gi.added == 0 &&
@@ -41,6 +37,32 @@ func (gi GitInfo) IsClean() bool {
 		gi.unmerged == 0 &&
 		gi.untracked == 0 &&
 		gi.stashed == 0
+}
+
+func (gi GitInfo) Summary() string {
+	// TODO: produces human readable output
+	// => Turn infos into the following output:
+	//  You have 2 unpushed commits. => TODO: ahead
+	//  You have 2 files you have to commit. => modified + added + deleted + renamed + copied + untracked
+	//  You have 2 files you have to merge. => unmerged
+	//  Add a remote address to push the code to. => TODO: missing remote
+	//  You have 1 stashes. => stashed
+	s := []string{}
+
+	committable := gi.modified + gi.added + gi.deleted + gi.renamed + gi.copied + gi.untracked
+	if committable > 0 {
+		s = append(s, fmt.Sprintf("%d files to commit", committable))
+	}
+
+	if gi.unmerged > 0 {
+		s = append(s, fmt.Sprintf("%d files to merge", gi.unmerged))
+	}
+
+	if gi.stashed > 0 {
+		s = append(s, fmt.Sprintf("%d stashes", gi.stashed))
+	}
+
+	return strings.Join(s, ", ")
 }
 
 func (gi *GitInfo) parseLine(l string) {

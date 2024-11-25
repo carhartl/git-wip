@@ -110,3 +110,22 @@ func TestIsClean(t *testing.T) {
 	gi = GitInfo{modified: 1}
 	require.Equal(t, false, gi.IsClean())
 }
+
+func TestSummary(t *testing.T) {
+	var tests = []struct {
+		name  string
+		input GitInfo
+		want  string
+	}{
+		{"withOneModified", GitInfo{modified: 1}, "1 files to commit"},
+		{"withManyModified", GitInfo{modified: 1, added: 1, deleted: 1, renamed: 1, copied: 1, untracked: 1}, "6 files to commit"},
+		{"withUnmerged", GitInfo{unmerged: 1}, "1 files to merge"},
+		{"withStashed", GitInfo{stashed: 1}, "1 stashes"},
+		{"withManyDifferent", GitInfo{modified: 1, stashed: 1}, "1 files to commit, 1 stashes"},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			require.Equal(t, tt.want, tt.input.Summary())
+		})
+	}
+}
