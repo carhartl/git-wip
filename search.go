@@ -36,7 +36,7 @@ func getRepos(path string, sub chan repoMsg) tea.Cmd {
 					repopath := filepath.Dir(path)
 
 					var buf = new(bytes.Buffer)
-					cmd := exec.Command("git", "status", "--porcelain=v2", "--show-stash")
+					cmd := exec.Command("git", "status", "--porcelain=v2", "--show-stash", "--branch")
 					cmd.Stdout = buf
 					cmd.Dir = repopath
 					err = cmd.Run()

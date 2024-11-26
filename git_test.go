@@ -101,6 +101,15 @@ func TestParseWithStashed(t *testing.T) {
 	require.Equal(t, 1, gi.stashed)
 }
 
+func TestParseWithAhead(t *testing.T) {
+	s := strings.NewReader("# branch.ab +1 -0\n")
+
+	gi := GitInfo{}
+	gi.Parse(s)
+
+	require.Equal(t, 1, gi.ahead)
+}
+
 func TestIsClean(t *testing.T) {
 	var gi GitInfo
 
@@ -121,6 +130,7 @@ func TestSummary(t *testing.T) {
 		{"withManyModified", GitInfo{modified: 1, added: 1, deleted: 1, renamed: 1, copied: 1, untracked: 1}, "6 files to commit"},
 		{"withUnmerged", GitInfo{unmerged: 1}, "1 files to merge"},
 		{"withStashed", GitInfo{stashed: 1}, "1 stashes"},
+		{"withUnpushedCommits", GitInfo{ahead: 1}, "1 unpushed commits"},
 		{"withManyDifferent", GitInfo{modified: 1, stashed: 1}, "1 files to commit, 1 stashes"},
 	}
 	for _, tt := range tests {

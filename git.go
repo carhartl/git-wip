@@ -19,6 +19,7 @@ type GitInfo struct {
 	unmerged  int
 	untracked int
 	stashed   int
+	ahead     int
 }
 
 func (gi *GitInfo) Parse(r io.Reader) {
@@ -36,7 +37,8 @@ func (gi GitInfo) IsClean() bool {
 		gi.copied == 0 &&
 		gi.unmerged == 0 &&
 		gi.untracked == 0 &&
-		gi.stashed == 0
+		gi.stashed == 0 &&
+		gi.ahead == 0
 }
 
 func (gi GitInfo) Summary() string {
@@ -55,6 +57,10 @@ func (gi GitInfo) Summary() string {
 		s = append(s, fmt.Sprintf("%d stashes", gi.stashed))
 	}
 
+	if gi.ahead > 0 {
+		s = append(s, fmt.Sprintf("%d unpushed commits", gi.ahead))
+	}
+
 	return strings.Join(s, ", ")
 }
 
@@ -64,7 +70,7 @@ func (gi *GitInfo) parseLine(l string) {
 	s.Scan()
 	switch s.Text() {
 	case "#":
-		gi.parseStashes(l)
+		gi.parseHeader(l)
 	case "1", "2":
 		s.Scan()
 		gi.parseXY(s.Text())
@@ -93,11 +99,14 @@ func (gi *GitInfo) parseXY(xy string) {
 	}
 }
 
-func (gi *GitInfo) parseStashes(s string) {
-	// line: # stash <N>
-	stashed := strings.Split(s, " ")
-	if stashed[1] == "stash" {
-		n, _ := strconv.Atoi(stashed[2])
+func (gi *GitInfo) parseHeader(s string) {
+	parts := strings.Split(s, " ")
+	switch parts[1] {
+	case "stash": // line: # stash 1
+		n, _ := strconv.Atoi(parts[2])
 		gi.stashed = n
+	case "branch.ab": // line: # branch.ab +1 -0
+		n, _ := strconv.Atoi(parts[2])
+		gi.ahead = n
 	}
 }
