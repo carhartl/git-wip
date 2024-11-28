@@ -11,15 +11,16 @@ import (
 type Dir = string
 
 type GitInfo struct {
-	modified  int
-	added     int
-	deleted   int
-	renamed   int
-	copied    int
-	unmerged  int
-	untracked int
-	stashed   int
-	ahead     int
+	modified    int
+	typeChanged int
+	added       int
+	deleted     int
+	renamed     int
+	copied      int
+	unmerged    int
+	untracked   int
+	stashed     int
+	ahead       int
 }
 
 func (gi *GitInfo) Parse(r io.Reader) {
@@ -31,6 +32,7 @@ func (gi *GitInfo) Parse(r io.Reader) {
 
 func (gi GitInfo) IsClean() bool {
 	return gi.modified == 0 &&
+		gi.typeChanged == 0 &&
 		gi.added == 0 &&
 		gi.deleted == 0 &&
 		gi.renamed == 0 &&
@@ -44,7 +46,13 @@ func (gi GitInfo) IsClean() bool {
 func (gi GitInfo) Summary() string {
 	s := []string{}
 
-	committable := gi.modified + gi.added + gi.deleted + gi.renamed + gi.copied + gi.untracked
+	committable := gi.modified +
+		gi.typeChanged +
+		gi.added +
+		gi.deleted +
+		gi.renamed +
+		gi.copied +
+		gi.untracked
 	if committable > 0 {
 		s = append(s, fmt.Sprintf("%d files to commit", committable))
 	}
@@ -87,6 +95,8 @@ func (gi *GitInfo) parseXY(xy string) {
 		switch c { // staged
 		case 'M':
 			gi.modified++
+		case 'T':
+			gi.typeChanged++
 		case 'A':
 			gi.added++
 		case 'D':

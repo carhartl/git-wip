@@ -27,6 +27,15 @@ func TestParseWithModified(t *testing.T) {
 	}
 }
 
+func TestParseWithTypeChanged(t *testing.T) {
+	s := strings.NewReader("1 .T N... 100644 100644 120000 e69de29bb2d1d6434b8b29ae775ad8c2e48c5391 e69de29bb2d1d6434b8b29ae775ad8c2e48c5391 foo.txt\n")
+
+	gi := GitInfo{}
+	gi.Parse(s)
+
+	require.Equal(t, 1, gi.typeChanged)
+}
+
 func TestParseWithAdded(t *testing.T) {
 	s := strings.NewReader("1 A. N... 000000 100644 100644 0000000000000000000000000000000000000000 e69de29bb2d1d6434b8b29ae775ad8c2e48c5391 test.txt\n")
 
