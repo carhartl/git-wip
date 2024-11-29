@@ -11,8 +11,22 @@ builds:
     goarch:
       - amd64
       - arm64
+signs:
+  - cmd: cosign
+    signature: "${artifact}.sig"
+    certificate: "${artifact}.pem"
+    args:
+      - sign-blob
+      - "--oidc-provider=github-actions"
+      - "--output-certificate=${certificate}"
+      - "--output-signature=${signature}"
+      - "${artifact}"
+      - --yes
+    artifacts: all
+    output: true
 brews:
   - name: git-wip
     repository:
       owner: carhartl
       name: homebrew-tap
+      token: "{{ .Env.HOMEBREW_TAP_PUBLISH_TOKEN }}"
