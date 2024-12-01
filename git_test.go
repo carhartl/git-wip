@@ -135,12 +135,15 @@ func TestSummary(t *testing.T) {
 		input GitInfo
 		want  string
 	}{
-		{"withOneModified", GitInfo{modified: 1}, "1 files to commit"},
+		{"withOneModified", GitInfo{modified: 1}, "1 file to commit"},
 		{"withManyModified", GitInfo{modified: 1, added: 1, deleted: 1, renamed: 1, copied: 1, untracked: 1}, "6 files to commit"},
-		{"withUnmerged", GitInfo{unmerged: 1}, "1 files to merge"},
-		{"withStashed", GitInfo{stashed: 1}, "1 stashes"},
-		{"withUnpushedCommits", GitInfo{ahead: 1}, "1 unpushed commits"},
-		{"withManyDifferent", GitInfo{modified: 1, stashed: 1}, "1 files to commit, 1 stashes"},
+		{"withOneUnmerged", GitInfo{unmerged: 1}, "1 file to merge"},
+		{"withManyUnmerged", GitInfo{unmerged: 2}, "2 files to merge"},
+		{"withOneStashed", GitInfo{stashed: 1}, "1 stash"},
+		{"withManyStashed", GitInfo{stashed: 2}, "2 stashes"},
+		{"withOneUnpushedCommit", GitInfo{ahead: 1}, "1 unpushed commit"},
+		{"withManyUnpushedCommit", GitInfo{ahead: 2}, "2 unpushed commits"},
+		{"withDifferent", GitInfo{modified: 2, stashed: 2}, "2 files to commit, 2 stashes"},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

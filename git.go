@@ -54,19 +54,19 @@ func (gi GitInfo) Summary() string {
 		gi.copied +
 		gi.untracked
 	if committable > 0 {
-		s = append(s, fmt.Sprintf("%d files to commit", committable))
+		s = append(s, fmt.Sprintf("%d %s to commit", committable, pluralize(committable, "file", "files")))
 	}
 
 	if gi.unmerged > 0 {
-		s = append(s, fmt.Sprintf("%d files to merge", gi.unmerged))
+		s = append(s, fmt.Sprintf("%d %s to merge", gi.unmerged, pluralize(gi.unmerged, "file", "files")))
 	}
 
 	if gi.stashed > 0 {
-		s = append(s, fmt.Sprintf("%d stashes", gi.stashed))
+		s = append(s, fmt.Sprintf("%d %s", gi.stashed, pluralize(gi.stashed, "stash", "stashes")))
 	}
 
 	if gi.ahead > 0 {
-		s = append(s, fmt.Sprintf("%d unpushed commits", gi.ahead))
+		s = append(s, fmt.Sprintf("%d unpushed %s", gi.ahead, pluralize(gi.ahead, "commit", "commits")))
 	}
 
 	return strings.Join(s, ", ")
@@ -119,4 +119,11 @@ func (gi *GitInfo) parseHeader(s string) {
 		n, _ := strconv.Atoi(parts[2])
 		gi.ahead = n
 	}
+}
+
+func pluralize(n int, singular string, plural string) string {
+	if n == 1 {
+		return singular
+	}
+	return plural
 }
