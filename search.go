@@ -10,9 +10,6 @@ import (
 	tea "github.com/charmbracelet/bubbletea"
 )
 
-type repoMsg struct {
-	repo repo
-}
 type repo struct {
 	path   string
 	status string
@@ -20,7 +17,7 @@ type repo struct {
 
 var excludeDirs = regexp.MustCompile(`.+/(\..+|node_modules)`) // Skip hidden directories (incl. .git) and node_modules
 
-func getRepos(path string, sub chan repoMsg) tea.Cmd {
+func getRepos(path string, sub chan repo) tea.Cmd {
 	return func() tea.Msg {
 		path, err := filepath.Abs(path)
 		if err != nil {
@@ -48,7 +45,7 @@ func getRepos(path string, sub chan repoMsg) tea.Cmd {
 					gi.Parse(buf)
 
 					if !gi.IsClean() {
-						sub <- repoMsg{repo: repo{path: repopath, status: gi.Summary()}}
+						sub <- repo{path: repopath, status: gi.Summary()}
 					}
 				}
 				return fs.SkipDir
@@ -59,11 +56,5 @@ func getRepos(path string, sub chan repoMsg) tea.Cmd {
 			return err
 		}
 		return doneMsg{}
-	}
-}
-
-func waitForRepoStatus(sub chan repoMsg) tea.Cmd {
-	return func() tea.Msg {
-		return repoMsg(<-sub)
 	}
 }

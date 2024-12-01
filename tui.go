@@ -12,6 +12,9 @@ import (
 
 var docStyle = lipgloss.NewStyle().Margin(1, 2)
 
+type repoMsg struct {
+	repo
+}
 type doneMsg struct{}
 type errMsg error
 
@@ -31,7 +34,7 @@ func (r repo) FilterValue() string {
 type model struct {
 	list     list.Model
 	path     string
-	sub      chan repoMsg
+	sub      chan repo
 	quitting bool
 	err      error
 }
@@ -91,7 +94,14 @@ func initialModel(wd string) tea.Model {
 	l.SetSpinner(spinner.MiniDot)
 	l.SetStatusBarItemName("repository", "repositories")
 	l.ToggleSpinner()
-	return model{list: l, path: wd, sub: make(chan repoMsg)}
+	return model{list: l, path: wd, sub: make(chan repo)}
+}
+
+func waitForRepoStatus(sub chan repo) tea.Cmd {
+	return func() tea.Msg {
+		repo := <-sub
+		return repoMsg(repoMsg{repo: repo})
+	}
 }
 
 func openEditor(path string) tea.Cmd {
