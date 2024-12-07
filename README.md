@@ -2,7 +2,7 @@
 
 [![CI](https://github.com/carhartl/git-wip/actions/workflows/ci.yml/badge.svg)](https://github.com/carhartl/git-wip/actions/workflows/ci.yml)
 
-Command-line utility for finding all your dirty Git repositories.
+Command-line utility for listing your work in progress Git repositories.
 
 ## Installation
 
