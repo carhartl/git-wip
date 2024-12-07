@@ -4,6 +4,7 @@ import (
 	"os/exec"
 	"strings"
 
+	"github.com/charmbracelet/bubbles/key"
 	"github.com/charmbracelet/bubbles/list"
 	"github.com/charmbracelet/bubbles/spinner"
 	tea "github.com/charmbracelet/bubbletea"
@@ -53,6 +54,8 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		switch msg.String() {
 		case "enter":
 			return m, openEditor(m.list.SelectedItem().(repo).path)
+		case "u":
+			return m, tea.Sequence(m.list.SetItems([]list.Item{}), m.Init())
 		}
 	case tea.WindowSizeMsg:
 		h, v := docStyle.GetFrameSize()
@@ -91,10 +94,20 @@ func (m model) View() string {
 func initialModel(wd string) tea.Model {
 	l := list.New([]list.Item{}, list.NewDefaultDelegate(), 0, 0)
 	l.Title = "Dirty Repositories"
-	l.SetSpinner(spinner.MiniDot)
 	l.SetStatusBarItemName("repository", "repositories")
+	l.SetSpinner(spinner.MiniDot)
 	l.ToggleSpinner()
+	l.AdditionalShortHelpKeys = additionalShortHelpKeys
 	return model{list: l, path: wd, sub: make(chan repo)}
+}
+
+func additionalShortHelpKeys() []key.Binding {
+	return []key.Binding{
+		key.NewBinding(
+			key.WithKeys("u"),
+			key.WithHelp("u", "update"),
+		),
+	}
 }
 
 func waitForRepoStatus(sub chan repo) tea.Cmd {
