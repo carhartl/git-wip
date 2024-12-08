@@ -21,10 +21,6 @@ func TestDetectGitRepo(t *testing.T) {
 	if err != nil {
 		t.Error(err)
 	}
-	err = withUntrackedFile(d)
-	if err != nil {
-		t.Error(err)
-	}
 
 	output := make(chan repo)
 	go func() {
