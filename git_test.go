@@ -144,10 +144,10 @@ func TestIsClean(t *testing.T) {
 	var gi GitInfo
 
 	gi = GitInfo{hasUpstream: true}
-	require.Equal(t, true, gi.IsClean())
+	require.True(t, gi.IsClean())
 
 	gi = GitInfo{modified: 1, hasUpstream: true}
-	require.Equal(t, false, gi.IsClean())
+	require.False(t, gi.IsClean())
 }
 
 func TestSummary(t *testing.T) {
