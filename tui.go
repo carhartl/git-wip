@@ -43,7 +43,7 @@ type model struct {
 func (m model) Init() tea.Cmd {
 	return tea.Batch(
 		m.list.StartSpinner(),
-		getRepos(m.path, m.sub),
+		startRepoSearch(m.path, m.sub),
 		waitForRepoStatus(m.sub),
 	)
 }
@@ -107,6 +107,16 @@ func additionalShortHelpKeys() []key.Binding {
 			key.WithKeys("u"),
 			key.WithHelp("u", "update"),
 		),
+	}
+}
+
+func startRepoSearch(path string, sub chan repo) tea.Cmd {
+	return func() tea.Msg {
+		err := collectDirtyRepos(path, sub)
+		if err != nil {
+			return err
+		}
+		return doneMsg{}
 	}
 }
 

@@ -28,7 +28,7 @@ func TestDetectGitRepo(t *testing.T) {
 
 	output := make(chan repo)
 	go func() {
-		getRepos(d, output)()
+		_ = collectDirtyRepos(d, output)
 		defer close(output)
 	}()
 
