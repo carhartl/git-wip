@@ -21,6 +21,7 @@ type GitInfo struct {
 	untracked   int
 	stashed     int
 	ahead       int
+	hasUpstream bool
 }
 
 func (gi *GitInfo) Parse(r io.Reader) {
@@ -40,7 +41,8 @@ func (gi GitInfo) IsClean() bool {
 		gi.unmerged == 0 &&
 		gi.untracked == 0 &&
 		gi.stashed == 0 &&
-		gi.ahead == 0
+		gi.ahead == 0 &&
+		gi.hasUpstream
 }
 
 func (gi GitInfo) Summary() string {
@@ -67,6 +69,10 @@ func (gi GitInfo) Summary() string {
 
 	if gi.ahead > 0 {
 		s = append(s, fmt.Sprintf("%d unpushed %s", gi.ahead, pluralize(gi.ahead, "commit", "commits")))
+	}
+
+	if !gi.hasUpstream {
+		s = append(s, "missing upstream")
 	}
 
 	return strings.Join(s, ", ")
@@ -118,6 +124,8 @@ func (gi *GitInfo) parseHeader(s string) {
 	case "branch.ab": // line: # branch.ab +1 -0
 		n, _ := strconv.Atoi(parts[2])
 		gi.ahead = n
+	case "branch.upstream":
+		gi.hasUpstream = true
 	}
 }
 

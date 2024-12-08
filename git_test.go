@@ -119,13 +119,34 @@ func TestParseWithAhead(t *testing.T) {
 	require.Equal(t, 1, gi.ahead)
 }
 
+func TestParseUpstream(t *testing.T) {
+	var tests = []struct {
+		name   string
+		input  string
+		wanted bool
+	}{
+		{"withUpstream", "# branch.oid 8eb77f5f5f17cf3d08ac8b6f74438d9425fdad6c\n# branch.head main\n# branch.upstream origin/main\n# branch.ab +0 -0\n", true},
+		{"withoutUpstream", "# branch.oid 8eb77f5f5f17cf3d08ac8b6f74438d9425fdad6c\n# branch.head main\n", false},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			s := strings.NewReader(tt.input)
+
+			gi := GitInfo{}
+			gi.Parse(s)
+
+			require.Equal(t, tt.wanted, gi.hasUpstream)
+		})
+	}
+}
+
 func TestIsClean(t *testing.T) {
 	var gi GitInfo
 
-	gi = GitInfo{}
+	gi = GitInfo{hasUpstream: true}
 	require.Equal(t, true, gi.IsClean())
 
-	gi = GitInfo{modified: 1}
+	gi = GitInfo{modified: 1, hasUpstream: true}
 	require.Equal(t, false, gi.IsClean())
 }
 
@@ -135,15 +156,16 @@ func TestSummary(t *testing.T) {
 		input GitInfo
 		want  string
 	}{
-		{"withOneModified", GitInfo{modified: 1}, "1 file to commit"},
-		{"withManyModified", GitInfo{modified: 1, added: 1, deleted: 1, renamed: 1, copied: 1, untracked: 1}, "6 files to commit"},
-		{"withOneUnmerged", GitInfo{unmerged: 1}, "1 file to merge"},
-		{"withManyUnmerged", GitInfo{unmerged: 2}, "2 files to merge"},
-		{"withOneStashed", GitInfo{stashed: 1}, "1 stash"},
-		{"withManyStashed", GitInfo{stashed: 2}, "2 stashes"},
-		{"withOneUnpushedCommit", GitInfo{ahead: 1}, "1 unpushed commit"},
-		{"withManyUnpushedCommit", GitInfo{ahead: 2}, "2 unpushed commits"},
-		{"withDifferent", GitInfo{modified: 2, stashed: 2}, "2 files to commit, 2 stashes"},
+		{"withOneModified", GitInfo{modified: 1, hasUpstream: true}, "1 file to commit"},
+		{"withManyModified", GitInfo{modified: 1, added: 1, deleted: 1, renamed: 1, copied: 1, untracked: 1, hasUpstream: true}, "6 files to commit"},
+		{"withOneUnmerged", GitInfo{unmerged: 1, hasUpstream: true}, "1 file to merge"},
+		{"withManyUnmerged", GitInfo{unmerged: 2, hasUpstream: true}, "2 files to merge"},
+		{"withOneStashed", GitInfo{stashed: 1, hasUpstream: true}, "1 stash"},
+		{"withManyStashed", GitInfo{stashed: 2, hasUpstream: true}, "2 stashes"},
+		{"withOneUnpushedCommit", GitInfo{ahead: 1, hasUpstream: true}, "1 unpushed commit"},
+		{"withManyUnpushedCommit", GitInfo{ahead: 2, hasUpstream: true}, "2 unpushed commits"},
+		{"withDifferent", GitInfo{modified: 2, stashed: 2, hasUpstream: true}, "2 files to commit, 2 stashes"},
+		{"withMissingUpstream", GitInfo{hasUpstream: false}, "missing upstream"},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
