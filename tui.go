@@ -123,7 +123,7 @@ func startRepoSearch(path string, sub chan repo) tea.Cmd {
 func waitForRepoStatus(sub chan repo) tea.Cmd {
 	return func() tea.Msg {
 		repo := <-sub
-		return repoMsg(repoMsg{repo: repo})
+		return repoMsg{repo: repo}
 	}
 }
 
