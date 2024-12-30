@@ -52,7 +52,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
 	case tea.KeyMsg:
 		switch msg.String() {
-		case "enter":
+		case tea.KeyEnter.String():
 			return m, openEditor(m.list.SelectedItem().(repo).path)
 		case "u":
 			return m, tea.Sequence(m.list.SetItems([]list.Item{}), m.Init())
