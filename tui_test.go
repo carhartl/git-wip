@@ -26,7 +26,9 @@ func TestSearchOutput(t *testing.T) {
 	if err != nil {
 		t.Error(err)
 	}
-	defer os.RemoveAll(d)
+	defer func() {
+		_ = os.RemoveAll(d)
+	}()
 	cmd := exec.Command("git", "init")
 	cmd.Dir = d
 	err = cmd.Run()
@@ -60,7 +62,9 @@ func TestUpdate(t *testing.T) {
 	if err != nil {
 		t.Error(err)
 	}
-	defer os.RemoveAll(d)
+	defer func() {
+		_ = os.RemoveAll(d)
+	}()
 	cmd := exec.Command("git", "init")
 	cmd.Dir = d
 	err = cmd.Run()

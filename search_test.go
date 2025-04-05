@@ -14,7 +14,9 @@ func TestDetectGitRepo(t *testing.T) {
 	if err != nil {
 		t.Error(err)
 	}
-	defer os.RemoveAll(d)
+	defer func() {
+		_ = os.RemoveAll(d)
+	}()
 	cmd := exec.Command("git", "init")
 	cmd.Dir = d
 	err = cmd.Run()
@@ -41,7 +43,9 @@ func TestExcludedDirectory(t *testing.T) {
 	if err != nil {
 		t.Error(err)
 	}
-	defer os.RemoveAll(d)
+	defer func() {
+		_ = os.RemoveAll(d)
+	}()
 	err = os.MkdirAll(d+"/.hidden/test", 0750)
 	if err != nil {
 		t.Error(err)
