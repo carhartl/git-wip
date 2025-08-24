@@ -108,6 +108,10 @@ func additionalShortHelpKeys() []key.Binding {
 			key.WithKeys("u"),
 			key.WithHelp("u", "update"),
 		),
+		key.NewBinding(
+			key.WithKeys("enter"),
+			key.WithHelp("enter", "open in editor"),
+		),
 	}
 }
 
