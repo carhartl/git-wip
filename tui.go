@@ -1,6 +1,7 @@
 package main
 
 import (
+	"os"
 	"os/exec"
 	"strings"
 
@@ -128,7 +129,7 @@ func waitForRepoStatus(sub chan repo) tea.Cmd {
 }
 
 func openEditor(path string) tea.Cmd {
-	c := exec.Command("code", path)
+	c := exec.Command(os.ExpandEnv("$EDITOR"), path)
 	return tea.ExecProcess(c, func(err error) tea.Msg {
 		return nil
 	})
