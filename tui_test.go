@@ -7,8 +7,8 @@ import (
 	"testing"
 	"time"
 
-	tea "github.com/charmbracelet/bubbletea"
-	"github.com/charmbracelet/x/exp/teatest"
+	tea "charm.land/bubbletea/v2"
+	"github.com/charmbracelet/x/exp/teatest/v2"
 )
 
 func withUntrackedFile(d string) error {
@@ -49,9 +49,9 @@ func TestSearchOutput(t *testing.T) {
 		return bytes.Contains(bts, []byte("1 file to commit"))
 	}, teatest.WithCheckInterval(time.Millisecond*100), teatest.WithDuration(time.Second*3))
 
-	tm.Send(tea.KeyMsg{
-		Type:  tea.KeyRunes,
-		Runes: []rune("q"),
+	tm.Send(tea.KeyPressMsg{
+		Text: "q",
+		Code: 'q',
 	})
 
 	tm.WaitFinished(t, teatest.WithFinalTimeout(time.Second))
@@ -86,18 +86,18 @@ func TestUpdate(t *testing.T) {
 		t.Error(err)
 	}
 
-	tm.Send(tea.KeyMsg{
-		Type:  tea.KeyRunes,
-		Runes: []rune("u"),
+	tm.Send(tea.KeyPressMsg{
+		Text: "u",
+		Code: 'u',
 	})
 
 	teatest.WaitFor(t, tm.Output(), func(bts []byte) bool {
 		return bytes.Contains(bts, []byte("1 file to commit, missing upstream"))
 	}, teatest.WithCheckInterval(time.Millisecond*100), teatest.WithDuration(time.Second*3))
 
-	tm.Send(tea.KeyMsg{
-		Type:  tea.KeyRunes,
-		Runes: []rune("q"),
+	tm.Send(tea.KeyPressMsg{
+		Text: "q",
+		Code: 'q',
 	})
 
 	tm.WaitFinished(t, teatest.WithFinalTimeout(time.Second))

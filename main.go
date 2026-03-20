@@ -4,7 +4,7 @@ import (
 	"log"
 	"os"
 
-	tea "github.com/charmbracelet/bubbletea"
+	tea "charm.land/bubbletea/v2"
 	"github.com/urfave/cli/v2"
 )
 
@@ -30,7 +30,7 @@ Flags:
 			if dir == "" {
 				dir, _ = os.Getwd() // Default: current directory
 			}
-			p := tea.NewProgram(initialModel(dir), tea.WithAltScreen())
+			p := tea.NewProgram(initialModel(dir))
 			if _, err := p.Run(); err != nil {
 				return err
 			}

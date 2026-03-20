@@ -5,11 +5,12 @@ import (
 	"os/exec"
 	"strings"
 
-	"github.com/charmbracelet/bubbles/key"
-	"github.com/charmbracelet/bubbles/list"
-	"github.com/charmbracelet/bubbles/spinner"
-	tea "github.com/charmbracelet/bubbletea"
-	"github.com/charmbracelet/lipgloss"
+	"charm.land/bubbles/v2/key"
+	"charm.land/bubbles/v2/list"
+	"charm.land/bubbles/v2/spinner"
+
+	tea "charm.land/bubbletea/v2"
+	"charm.land/lipgloss/v2"
 )
 
 var docStyle = lipgloss.NewStyle().Margin(1, 2)
@@ -34,11 +35,10 @@ func (r repo) FilterValue() string {
 }
 
 type model struct {
-	list     list.Model
-	path     string
-	sub      chan repo
-	quitting bool
-	err      error
+	list list.Model
+	path string
+	sub  chan repo
+	err  error
 }
 
 func (m model) Init() tea.Cmd {
@@ -51,9 +51,9 @@ func (m model) Init() tea.Cmd {
 
 func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
-	case tea.KeyMsg:
+	case tea.KeyPressMsg:
 		switch msg.String() {
-		case tea.KeyEnter.String():
+		case "enter":
 			return m, openEditor(m.list.SelectedItem().(repo).path)
 		case "u":
 			return m, tea.Sequence(m.list.SetItems([]list.Item{}), m.Init())
@@ -79,17 +79,12 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	return m, cmd
 }
 
-func (m model) View() string {
-	if m.err != nil {
-		return m.err.Error()
-	}
-	// Remove duplicate (status has it) + misaligned string coming from:
-	// https://github.com/charmbracelet/bubbles/blob/178590b4469b2386726cff8da7c479615a746a94/list/list.go#L1220
+func (m model) View() tea.View {
+	// Remove duplicate (status has it) + misaligned string in list view...
 	s := strings.Replace(m.list.View(), "No repositories.", "", 1)
-	if m.quitting {
-		s += "\n"
-	}
-	return s
+	v := tea.NewView(s)
+	v.AltScreen = true
+	return v
 }
 
 func initialModel(wd string) tea.Model {
