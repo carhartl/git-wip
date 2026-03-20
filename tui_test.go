@@ -46,7 +46,7 @@ func TestSearchOutput(t *testing.T) {
 	}
 
 	teatest.WaitFor(t, tm.Output(), func(bts []byte) bool {
-		return bytes.Contains(bts, []byte("1 file to commit"))
+		return bytes.Contains(bts, []byte("1 file to commit, missing upstream"))
 	}, teatest.WithCheckInterval(time.Millisecond*100), teatest.WithDuration(time.Second*3))
 
 	err = tm.Quit()
@@ -90,7 +90,7 @@ func TestUpdate(t *testing.T) {
 	})
 
 	teatest.WaitFor(t, tm.Output(), func(bts []byte) bool {
-		return bytes.Contains(bts, []byte("1 file to commit, missing upstream"))
+		return bytes.Contains(bts, []byte("1 file to commit"))
 	}, teatest.WithCheckInterval(time.Millisecond*100), teatest.WithDuration(time.Second*3))
 
 	err = tm.Quit()
