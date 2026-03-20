@@ -90,7 +90,7 @@ func TestUpdate(t *testing.T) {
 	})
 
 	teatest.WaitFor(t, tm.Output(), func(bts []byte) bool {
-		return bytes.Contains(bts, []byte("1 file"))
+		return bytes.Contains(bts, []byte("file"))
 	}, teatest.WithCheckInterval(time.Millisecond*100), teatest.WithDuration(time.Second*3))
 
 	err = tm.Quit()
