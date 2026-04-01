@@ -4,6 +4,7 @@ import "package://github.com/jdx/hk/releases/download/v1.39.0/hk@1.39.0#/Builtin
 local linters = new Mapping<String, Step> {
   ["actionlint"] = Builtins.actionlint
   ["golangci-lint"] = Builtins.golangci_lint
+  ["mise"] = Builtins.mise
   ["pkl"] = Builtins.pkl
   ["pkl-format"] = Builtins.pkl_format
   ["prettier"] = Builtins.prettier
