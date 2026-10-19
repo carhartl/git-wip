@@ -57,6 +57,8 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			return m, openEditor(m.list.SelectedItem().(repo).path)
 		case "u":
 			return m, tea.Sequence(m.list.SetItems([]list.Item{}), m.Init())
+		case "ctrl+c", "q":
+			return m, tea.Quit
 		}
 	case tea.WindowSizeMsg:
 		h, v := docStyle.GetFrameSize()
