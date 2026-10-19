@@ -3,7 +3,7 @@ module github.com/carhartl/git-wip
 go 1.26.0
 
 require (
-	charm.land/bubbles/v2 v2.1.1
+	charm.land/bubbles/v2 v2.2.1
 	charm.land/bubbletea/v2 v2.1.0
 	charm.land/lipgloss/v2 v2.0.5
 	github.com/stretchr/testify v1.12.0
