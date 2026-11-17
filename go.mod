@@ -1,11 +1,11 @@
 module github.com/carhartl/git-wip
 
-go 1.26.0
+go 1.26.7
 
 require (
 	charm.land/bubbles/v2 v2.2.1
 	charm.land/bubbletea/v2 v2.1.0
-	charm.land/lipgloss/v2 v2.0.5
+	charm.land/lipgloss/v2 v2.1.0
 	github.com/stretchr/testify v1.12.0
 	github.com/urfave/cli/v2 v2.27.7
 )
